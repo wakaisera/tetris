@@ -389,3 +389,4 @@ FodyWeavers.xsd
 
 # Else folders & files
 out/
+CMakeSettings.json
