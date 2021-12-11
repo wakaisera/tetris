@@ -3,16 +3,6 @@
 
 #include "tetromino.h"
 
-int Tetromino::forms[7][4] = {
-    1,3,5,7, // I
-    2,4,5,7, // Z
-    3,5,4,6, // S
-    3,5,4,7, // T
-    2,3,5,7, // L
-    3,5,7,6, // J
-    2,3,4,5, // O
-};
-
 int Tetromino::field[height][width] = { 0 };
 
 Color Tetromino::color[9] = {
@@ -40,9 +30,98 @@ int Tetromino::get_shape_type(void)
 
 void Tetromino::init_points(void)
 {
-    for (int i = 0; i < 4; ++i) {
-        p[i].set_x(forms[shape][i] % 2);
-        p[i].set_y(forms[shape][i] / 2);
+    switch (shape) {
+    // I shape
+    case 0: {
+        p[0].set_x(width / 2 - 2);
+        p[0].set_y(0);
+        p[1].set_x(width / 2 - 1);
+        p[1].set_y(0);
+        p[2].set_x(width / 2);
+        p[2].set_y(0);
+        p[3].set_x(width / 2 + 1);
+        p[3].set_y(0);
+
+        break;
+    }
+    // J shape
+    case 1: {
+        p[0].set_x(width / 2 - 2);
+        p[0].set_y(0);
+        p[1].set_x(width / 2);
+        p[1].set_y(1);
+        p[2].set_x(width / 2 - 1);
+        p[2].set_y(1);
+        p[3].set_x(width / 2 - 2);
+        p[3].set_y(1);
+
+        break;
+    }
+    // L shape
+    case 2: {
+        p[0].set_x(width / 2);
+        p[0].set_y(0);
+        p[1].set_x(width / 2);
+        p[1].set_y(1);
+        p[2].set_x(width / 2 - 1);
+        p[2].set_y(1);
+        p[3].set_x(width / 2 - 2);
+        p[3].set_y(1);
+
+        break;
+    }
+    // O shape
+    case 3: {
+        p[0].set_x(width / 2 - 1);
+        p[0].set_y(0);
+        p[1].set_x(width / 2);
+        p[1].set_y(0);
+        p[2].set_x(width / 2);
+        p[2].set_y(1);
+        p[3].set_x(width / 2 - 1);
+        p[3].set_y(1);
+
+        break;
+    }
+    // S shape
+    case 4: {
+        p[0].set_x(width / 2 - 1);
+        p[0].set_y(0);
+        p[1].set_x(width / 2);
+        p[1].set_y(0);
+        p[2].set_x(width / 2 - 1);
+        p[2].set_y(1);
+        p[3].set_x(width / 2 - 2);
+        p[3].set_y(1);
+
+        break;
+    }
+    // Z shape
+    case 5: {
+        p[0].set_x(width / 2 - 1);
+        p[0].set_y(1);
+        p[1].set_x(width / 2);
+        p[1].set_y(1);
+        p[2].set_x(width / 2 - 1);
+        p[2].set_y(0);
+        p[3].set_x(width / 2 - 2);
+        p[3].set_y(0);
+
+        break;
+    }
+    // T shape
+    case 6: {
+        p[0].set_x(width / 2 - 1);
+        p[0].set_y(0);
+        p[1].set_x(width / 2 - 1);
+        p[1].set_y(1);
+        p[2].set_x(width / 2);
+        p[2].set_y(1);
+        p[3].set_x(width / 2 - 2);
+        p[3].set_y(1);
+
+        break;
+    }
     }
 }
 
@@ -65,7 +144,9 @@ Point* Tetromino::get_q_points(void)
 
 void Tetromino::set_rotate(bool rotate)
 {
-    this->rotate = rotate;
+    if (get_shape_type() != 3) {
+        this->rotate = rotate;
+    }
 }
 
 void Tetromino::set_dx(int dx)
@@ -144,10 +225,10 @@ void Tetromino::delete_full_line(void)
 void Tetromino::reset_minos(void)
 {
     for (int i = 0; i < 4; ++i) {
-        if (p[i].get_y() < 0) {
-            for (int i = 0; i < height; ++i) {
-                for (int j = 0; j < width; ++j) {
-                    field[i][j] = 0;
+        if (field[0][p[i].get_x()] != 0) {
+            for (int j = 0; j < height; ++j) {
+                for (int k = 0; k < width; ++k) {
+                    field[j][k] = 0;
                 }
             }
         }

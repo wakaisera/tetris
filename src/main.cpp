@@ -15,7 +15,6 @@ int main()
     Clock clock;
 
     Tetromino tetromino;
-    int gameover = 1;
 
     RectangleShape cell(Vector2f(cell_size - 1, cell_size - 1));
     while (window.isOpen()) {
@@ -46,13 +45,18 @@ int main()
         /*
         for (int i = 0; i < width; ++i) {
             for (int j = 0; j < height; ++j) {
-                cell.setFillColor(Color::Blue);
                 cell.setPosition(cell_size * i, cell_size * j);
+                if (Tetromino::field[j][i] == 0) {
+                    cell.setFillColor(Color::Black);
+                }
+                else {
+                    cell.setFillColor(Tetromino::color[tetromino.get_shape_type()]);
+                }
                 window.draw(cell);
             }
         }
         */
-
+        tetromino.reset_minos();
         tetromino.move();
         tetromino.rotating();
         if (timer > delay) {
@@ -74,7 +78,6 @@ int main()
         tetromino.set_dx(0);
         tetromino.set_rotate(false);
         delay = 0.3;
-        tetromino.reset_minos();
 
         window.clear(Color::Black);
         for (int i = 0; i < height; ++i) {

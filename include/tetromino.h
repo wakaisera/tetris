@@ -29,7 +29,6 @@ class Tetromino {
 	int shape;
 	bool rotate;
 public:
-	static int forms[7][4];
 	static int field[height][width];
 	static Color color[9];
 	Tetromino(void);
