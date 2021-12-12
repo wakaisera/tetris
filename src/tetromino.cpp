@@ -1,9 +1,51 @@
 #include <ctime>
 #include <random>
+#include <iostream>
 
 #include "tetromino.h"
 
-int Tetromino::field[height][width] = { 0 };
+// int Tetromino::field[height][width] = { 0 };
+
+Game::Game(void)
+{
+    set_screen_resize(4);
+    set_cell_size(8);
+    set_width(10);
+    set_height(20);
+    set_frame_duration(16667);
+    field_init();
+}
+
+Game::~Game(void)
+{
+    for (int i = 0; i < height; ++i) {
+        delete[] field[i];
+    }
+    delete[] field;
+}
+
+void Game::field_init(void)
+{
+    field = new int* [height];
+    for (int i = 0; i < height; ++i) {
+        field[i] = new int[width];
+    }
+    for (int i = 0; i < height; ++i) {
+        for (int j = 0; j < width; ++j) {
+            field[i][j] = 0;
+        }
+    }
+}
+
+void Game::set_field(int i, int j, int value)
+{
+    field[i][j] = value;
+}
+
+int Game::get_field(int i, int j)
+{
+    return field[i][j];
+}
 
 Color Tetromino::color[9] = {
     Color(36, 36, 85),
@@ -17,7 +59,13 @@ Color Tetromino::color[9] = {
     Color(73, 73, 85)
 };
 
-Tetromino::Tetromino(void) : dx(0), rotate(false)
+Tetromino::Tetromino(void) : Polyomino()
+{
+    rand_shape();
+    init_points();
+}
+
+Tetromino::Tetromino(int dx) : Polyomino(dx)
 {
     rand_shape();
     init_points();

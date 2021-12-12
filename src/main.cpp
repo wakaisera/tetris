@@ -7,16 +7,17 @@ using namespace std;
 
 int main()
 {
-    RenderWindow window(VideoMode(cell_size * width * screen_resize, cell_size * height * screen_resize), "Trash Tetris", Style::Close | Style::Titlebar);
-    window.setView(View(sf::FloatRect(0, 0, cell_size * width, cell_size * height)));
+    // Tetromino tetromino;
+    Tetromino tetromino(0);
+
+    RenderWindow window(VideoMode(tetromino.get_cell_size() * tetromino.get_width() * tetromino.get_screen_resize(), tetromino.get_cell_size() * tetromino.get_height() * tetromino.get_screen_resize()), "Trash Tetris", Style::Close | Style::Titlebar);
+    window.setView(View(sf::FloatRect(0, 0, tetromino.get_cell_size() * tetromino.get_width(), tetromino.get_cell_size() * tetromino.get_height())));
     window.setFramerateLimit(120);
 
     float timer = 0, delay = 0.3;
     Clock clock;
 
-    Tetromino tetromino;
-
-    RectangleShape cell(Vector2f(cell_size - 1, cell_size - 1));
+    RectangleShape cell(Vector2f(tetromino.get_cell_size() - 1, tetromino.get_cell_size() - 1));
     while (window.isOpen()) {
         float time = clock.getElapsedTime().asSeconds();
         clock.restart();
@@ -38,7 +39,7 @@ int main()
                     tetromino.set_dx(-1);
                 }
                 else if (event.key.code == Keyboard::Down) {
-                    delay = 0.05;
+                    delay = 0.005;
                 }
             }
         }
@@ -66,7 +67,8 @@ int main()
             }
             if (tetromino.border_check() == false) {
                 for (int i = 0; i < 4; ++i) {
-                    Tetromino::field[tetromino.get_q_points()[i].get_y()][tetromino.get_q_points()[i].get_x()] = 1;
+                    // Tetromino::field[tetromino.get_q_points()[i].get_y()][tetromino.get_q_points()[i].get_x()] = 1;
+                    tetromino.set_field(tetromino.get_q_points()[i].get_y(), tetromino.get_q_points()[i].get_x(), 1);
                 }
                 tetromino.rand_shape();
                 tetromino.init_points();
@@ -80,20 +82,20 @@ int main()
         delay = 0.3;
 
         window.clear(Color::Black);
-        for (int i = 0; i < height; ++i) {
-            for (int j = 0; j < width; ++j) {
-                if (tetromino.field[i][j] == 0) {
+        for (int i = 0; i < tetromino.get_height(); ++i) {
+            for (int j = 0; j < tetromino.get_width(); ++j) {
+                if (tetromino.get_field(i, j) == 0) {
                     continue;
                 }
                 cell.setFillColor(Tetromino::color[tetromino.get_shape_type()]);
-                cell.setPosition(j * cell_size, i * cell_size);
+                cell.setPosition(j * tetromino.get_cell_size(), i * tetromino.get_cell_size());
                 window.draw(cell);
             }
         }
 
         for (int i = 0; i < 4; ++i) {
             cell.setFillColor(Tetromino::color[tetromino.get_shape_type()]);
-            cell.setPosition(tetromino.get_points()[i].get_x() * cell_size, tetromino.get_points()[i].get_y() * cell_size);
+            cell.setPosition(tetromino.get_points()[i].get_x() * tetromino.get_cell_size(), tetromino.get_points()[i].get_y() * tetromino.get_cell_size());
             window.draw(cell);
         }
         window.display();
