@@ -1,5 +1,3 @@
-#include <SFML/Graphics.hpp>
-
 #include "tetromino.h"
 
 using namespace sf;
