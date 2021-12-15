@@ -1,5 +1,7 @@
 #include "tetromino.h"
 
+#include <SFML/Audio.hpp>
+
 using namespace sf;
 using namespace std;
 
@@ -15,9 +17,14 @@ int main()
     float timer = 0, delay = 0.3;
     Clock clock;
 
+    Music music;
+    music.openFromFile("bizarre_bits.wav");
+    music.play();
+    music.setLoop(true);
+
     RectangleShape cell(Vector2f(tetromino.get_cell_size() - 1, tetromino.get_cell_size() - 1));
     while (window.isOpen()) {
-        float time = clock.getElapsedTime().asSeconds();
+        float time = clock.getElapsedTime().asSeconds(); // получаем время, прошедшего с момента старта таймера
         clock.restart();
         timer += time;
 
@@ -58,6 +65,10 @@ int main()
         tetromino.reset_minos();
         tetromino.move();
         tetromino.rotating();
+        /*
+        *   по истечении 0.3 секунды с начала отсчета времени (delay)
+        *   мы будем сдвигать все части тетрамино на 1 позицию вниз
+        */
         if (timer > delay) {
             tetromino.init_q_points();
             for (int i = 0; i < 4; ++i) {
@@ -66,7 +77,7 @@ int main()
             if (tetromino.border_check() == false) {
                 for (int i = 0; i < 4; ++i) {
                     // Tetromino::field[tetromino.get_q_points()[i].get_y()][tetromino.get_q_points()[i].get_x()] = 1;
-                    tetromino.set_field(tetromino.get_q_points()[i].get_y(), tetromino.get_q_points()[i].get_x(), 1);
+                    tetromino.set_field(tetromino.get_q_points()[i].get_y(), tetromino.get_q_points()[i].get_x(), tetromino.get_shape_type() + 1);
                 }
                 tetromino.rand_shape();
                 tetromino.init_points();
@@ -79,20 +90,23 @@ int main()
         tetromino.set_rotate(false);
         delay = 0.3;
 
+        /* отрисовка игрового поля и тетрамино */
         window.clear(Color::Black);
         for (int i = 0; i < tetromino.get_height(); ++i) {
             for (int j = 0; j < tetromino.get_width(); ++j) {
                 if (tetromino.get_field(i, j) == 0) {
                     continue;
                 }
-                cell.setFillColor(Tetromino::color[tetromino.get_shape_type()]);
+                // cell.setFillColor(Tetromino::color[tetromino.get_shape_type()]);
+                cell.setFillColor(Tetromino::color[tetromino.get_field(i, j)]);
                 cell.setPosition(j * tetromino.get_cell_size(), i * tetromino.get_cell_size());
                 window.draw(cell);
             }
         }
 
         for (int i = 0; i < 4; ++i) {
-            cell.setFillColor(Tetromino::color[tetromino.get_shape_type()]);
+            /* красим тетрамино и устанавливам позицию каждого кубика */
+            cell.setFillColor(Tetromino::color[tetromino.get_shape_type() + 1]);
             cell.setPosition(tetromino.get_points()[i].get_x() * tetromino.get_cell_size(), tetromino.get_points()[i].get_y() * tetromino.get_cell_size());
             window.draw(cell);
         }
