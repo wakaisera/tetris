@@ -43,7 +43,7 @@ public:
 
 class Polyomino: public Game {
 protected:
-	int dx;
+	int dx; // Шаг по x
 	bool rotate;
 	Polyomino(void) : Game(), dx(0), rotate(false) {};
 	Polyomino(int dx, bool rotate = false) : Game(), dx(0), rotate(rotate) {};
@@ -54,7 +54,7 @@ public:
 
 class Tetromino: public Polyomino {
 	Point p[4];
-	Point q[4];
+	Point q[4]; // вспомогательный доп. массив
 	int shape;
 public:
 	// static int field[height][width];
