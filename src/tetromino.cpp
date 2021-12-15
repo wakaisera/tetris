@@ -47,6 +47,16 @@ int Game::get_field(int i, int j)
 }
 
 Color Tetromino::color[9] = {
+    Color::White,
+    Color::Red,
+    Color::Green,
+    Color::Blue,
+    Color::Magenta,
+    Color::Yellow,
+    Color::Cyan,
+    Color(73, 73, 85),
+    Color(219, 0, 0)
+    /*
     Color(36, 36, 85),
     Color(0, 219, 255),
     Color(0, 36, 255),
@@ -56,6 +66,7 @@ Color Tetromino::color[9] = {
     Color(146, 0, 255),
     Color(219, 0, 0),
     Color(73, 73, 85)
+    */
 };
 
 Tetromino::Tetromino(void) : Polyomino()
@@ -204,10 +215,12 @@ void Tetromino::set_dx(int dx)
 void Tetromino::move(void)
 {
     for (int i = 0; i < 4; ++i) {
-        q[i] = p[i];
-        p[i].set_x(p[i].get_x() + dx);
+        q[i] = p[i]; // перемещаем координаты в вспомогательный массив
+        p[i].set_x(p[i].get_x() + dx); // делаем шаг влево или вправо
     }
+    /* проверка на выход за границы */
     if (border_check() == false) {
+        /* если вышли возвращаем старые координаты */
         for (int i = 0; i < 4; ++i) {
             p[i] = q[i];
         }
@@ -216,17 +229,23 @@ void Tetromino::move(void)
 
 void Tetromino::rotating(void)
 {
-    if (rotate) {
-        Point new_p = p[1];
+    if (rotate == true) {
+        Point new_p = p[1]; // центр вращения
         for (int i = 0; i < 4; ++i) {
-            int x = p[i].get_y() - new_p.get_y();
-            int y = p[i].get_x() - new_p.get_x();
+            /*
+            *   уравнения вращения вокруг заданной точки с координатами (x0, y0)
+            *   X = x0 - (y - y0);  Y = y0 + (x - x0);
+            */
+            int x = p[i].get_y() - new_p.get_y(); // y - y0
+            int y = p[i].get_x() - new_p.get_x(); // x - x0
 
             p[i].set_x(new_p.get_x() - x);
             p[i].set_y(new_p.get_y() + y);
         }
     }
+    /* проверка на выход за границы */
     if (border_check() == false) {
+        /* если вышли возвращаем старые координаты */
         for (int i = 0; i < 4; ++i) {
             p[i] = q[i];
         }
@@ -236,10 +255,12 @@ void Tetromino::rotating(void)
 bool Tetromino::border_check(void)
 {
     for (int i = 0; i < 4; ++i) {
+        /* не вышли ли мы за границы поля слева, справа и снизу? */
         if (p[i].get_x() < 0 || p[i].get_x() >= width || p[i].get_y() >= height) {
             return false;
         }
-        else if (field[p[i].get_y()][p[i].get_x()]) {
+        /* свободна ли ячейка расположенная на пути движения или занята другими тетрамино? */
+        else if (field[p[i].get_y()][p[i].get_x()] != 0) {
             return false;
         }
     }
@@ -255,14 +276,23 @@ void Tetromino::rand_shape(void)
 void Tetromino::delete_full_line(void)
 {
     int k = height - 1;
+    /* идем по массиву field снизу вверх */
     for (int i = height - 1; i > 0; --i) {
-        int count = 0;
+        int count = 0; // счетчик занятых полей игрового поля
         for (int j = 0; j < width; ++j) {
             if (field[i][j]) {
                 ++count;
             }
             field[k][j] = field[i][j];
         }
+        /*
+        *   Если есть свободное место, то уменьшаем счетчик k,
+        *   чтобы текущая строка не изменилась.
+        *   Иначе при очередном присваивании field[k][j] = field[i][j]
+        *   индекс k не будет равен i и элементы верхней строки 
+        *   будут присвоены элементам нижней строки,
+        *   т.е. произойдет сдвиг вниз на одну строку
+        */
         if (count < width) {
             --k;
         }
